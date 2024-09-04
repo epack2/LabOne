@@ -1,5 +1,10 @@
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.util.*;
 
 
@@ -8,23 +13,23 @@ public class Main {
 
 
     record Denomination (String name, double amt, String form, String img){
-        public static final Denomination HundredDollar = new Denomination("HundredDollars", 100.00, "bill", "Hundred_note.png");
-        public static final Denomination FiftyDollar = new Denomination("FiftyDollars", 50.00, "bill", "fifty_note.png");
-        public static final Denomination TwentyDollar = new Denomination("TwentyDollars", 20.00, "bill", "twenty_note.png");
-        public static final Denomination TenDollar = new Denomination("TenDollars", 10.00, "bill", "ten_note.png");
-        public static final Denomination FiveDollar = new Denomination("FiveDollars", 5.00, "bill", "five_note.png");
-        public static final Denomination OneDollar = new Denomination("OneDollar", 1.00, "bill", "one_note.png");
-        public static final Denomination Quarter = new Denomination("Quarter", 0.25, "coin", "quarter.png");
-        public static final Denomination Dime = new Denomination("Dime", 0.10, "coin", "dime.png");
-        public static final Denomination Nickel = new Denomination("Nickel", 0.05, "coin", "nickel.png");
-        public static final Denomination Penny = new Denomination("Penny", 0.01, "coin", "penny.png");
+        public static final Denomination HundredDollar = new Denomination("HundredDollars", 100.00, "bill", "images/Hundred_note.png");
+        public static final Denomination FiftyDollar = new Denomination("FiftyDollars", 50.00, "bill", "images/fifty_note.png");
+        public static final Denomination TwentyDollar = new Denomination("TwentyDollars", 20.00, "bill", "images/twenty_note.png");
+        public static final Denomination TenDollar = new Denomination("TenDollars", 10.00, "bill", "images/ten_note.png");
+        public static final Denomination FiveDollar = new Denomination("FiveDollars", 5.00, "bill", "images/five_note.png");
+        public static final Denomination OneDollar = new Denomination("OneDollar", 1.00, "bill", "images/one_note.png");
+        public static final Denomination Quarter = new Denomination("Quarter", 0.25, "coin", "images/quarter.png");
+        public static final Denomination Dime = new Denomination("Dime", 0.10, "coin", "images/dime.png");
+        public static final Denomination Nickel = new Denomination("Nickel", 0.05, "coin", "images/nickel.png");
+        public static final Denomination Penny = new Denomination("Penny", 0.01, "coin", "images/penny.png");
 
 
 
     }
     public static class Purse
     {
-            static HashMap<Main.Denomination, Integer> cash = new HashMap<>();
+            static HashMap<Denomination, Integer> cash = new HashMap<>();
 
             static void add(Denomination m, Integer num) {
                 if (cash.containsKey(m))
@@ -52,9 +57,9 @@ public class Main {
 
                 }
 
-                if(cash.containsKey(Main.Denomination.TwentyDollar))
+                if(cash.containsKey(Denomination.TwentyDollar))
                 {
-                    Amount = cash.get(Main.Denomination.TwentyDollar) * Main.Denomination.TwentyDollar.amt;
+                    Amount = cash.get(Denomination.TwentyDollar) * Denomination.TwentyDollar.amt;
 
                 }
 
@@ -82,9 +87,9 @@ public class Main {
 
                 }
 
-                if(cash.containsKey(Main.Denomination.Dime))
+                if(cash.containsKey(Denomination.Dime))
                 {
-                    Amount = cash.get(Main.Denomination.Dime) * Main.Denomination.Dime.amt;
+                    Amount = cash.get(Denomination.Dime) * Denomination.Dime.amt;
 
                 }
 
@@ -178,8 +183,12 @@ public class Main {
 
     public static class Register
     {
-        static void makeChange(double amt)
+
+
+        static Purse makeChange(double amt)
         {
+
+            Purse Purse = null;
             double hundreddollar = 0, fiftydollar = 0, twentydollar = 0, tendollar = 0, fivedollar = 0, onedollar = 0, quarters = 0, dimes = 0, nickels = 0, pennies = 0;
             while (amt - 0 > 0.001) {
                 if (amt >= 100) {
@@ -269,14 +278,22 @@ public class Main {
             }
 
             System.out.println(Purse.tostring());
+
+            return Purse;
         }
 
         public static void main(String[] args) {
-
-            System.out.println("Please enter an amount");
+            System.out.println("Do you want graphics? <y or n> ");
             Scanner sc = new Scanner(System.in);
-            double amount = sc.nextDouble();
-            makeChange(amount);
+            String answer = sc.nextLine();
+            if (answer.equalsIgnoreCase("n")) {
+                System.out.println("Please enter an amount");
+                double amount = sc.nextDouble();
+                makeChange(amount);
+            }
+            else {
+                MakingChange.screen();
+            }
 
 
 
@@ -287,5 +304,167 @@ public class Main {
 
 
     }
+
+    public class MakingChange
+    {
+        Register register = new Register();
+        Purse purse = new Purse();
+        public static void screen() {
+            JFrame frame = new JFrame("Frames and Panels");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            frame.getContentPane().add(new RegisterPanel());
+
+            frame.pack();
+            frame.setVisible(true);
+
+        }
+
+    }
+    private static class RegisterPanel extends JPanel
+    {
+        private JTextField textfield;
+        private JLabel label;
+        Register register = new Register();
+        public RegisterPanel() {
+            this.setPreferredSize(new Dimension(700, 700));
+            this.setBackground(Color.WHITE);
+
+            textfield = new JTextField("Sample Text");
+            textfield.setPreferredSize(new Dimension(300, 50));
+            textfield.addActionListener(new InputListener());
+
+            label = new JLabel("");
+            label.setFont(new Font("Arial", Font.BOLD, 20));
+
+            this.add(textfield);
+            this.add(label);
+
+
+
+
+
+        }
+
+        private class InputListener implements ActionListener
+        {
+            public void actionPerformed(ActionEvent e) {
+                String text = textfield.getText();
+                double amt = Double.parseDouble(text);
+
+                Purse purse = register.makeChange(amt);
+
+                label.setText(purse.tostring());
+
+
+                double hundreddollar = 0, fiftydollar = 0, twentydollar = 0, tendollar = 0, fivedollar = 0, onedollar = 0, quarters = 0, dimes = 0, nickels = 0, pennies = 0;
+                while (amt - 0 > 0.001) {
+                    if (amt >= 100) {
+                        hundreddollar += 1;
+                        amt -= 100.00;
+                    }
+                    else if (amt >= 50.00) {
+                        fiftydollar += 1;
+                        amt -= 50.00;
+                    }
+                    else if (amt >= 20.00) {
+                        twentydollar += 1;
+                        amt -= 20.00;
+                    }
+                    else if (amt >= 10.00) {
+                        tendollar += 1;
+                        amt -= 10.00;
+                    } else if (amt >= 5.00) {
+                        fivedollar += 1;
+                        amt -= 5.00;
+                    } else if (amt >= 1.00) {
+                        onedollar += 1;
+                        amt -= 1.00;
+                    }else if (amt >= 0.25) {
+                        quarters += 1;
+                        amt -= 0.25;
+                    }else if (amt >= 0.10) {
+                        dimes += 1;
+                        amt -= 0.10;
+                    }else if (amt >= 0.05) {
+                        nickels += 1;
+                        amt -= 0.05;
+                    }
+                    else if (amt >= 0.01) {
+                        pennies += 1;
+                        amt -= 0.01;
+                    }
+                }
+                while (hundreddollar != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.HundredDollar.img());
+                    label.setIcon(img);
+                    hundreddollar -= 1;
+                }
+                while (fiftydollar != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.FiftyDollar.img());
+                    label.setIcon(img);
+                    fiftydollar -= 1;
+                }
+                while (twentydollar != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.TwentyDollar.img());
+                    label.setIcon(img);
+                    twentydollar -= 1;
+                }
+                while (tendollar != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.TenDollar.img());
+                    label.setIcon(img);
+                    tendollar -= 1;
+                }
+                while (fivedollar != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.FiveDollar.img());
+                    label.setIcon(img);
+                    fivedollar -= 1;
+                }
+                while (onedollar != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.OneDollar.img());
+                    label.setIcon(img);
+                    onedollar -= 1;
+                }
+                while (quarters != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.Quarter.img());
+                    label.setIcon(img);
+                    quarters -= 1;
+                }
+                while (dimes != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.Dime.img());
+                    label.setIcon(img);
+                    dimes -= 1;
+                }while (nickels != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.Nickel.img());
+                    label.setIcon(img);
+                    nickels -= 1;
+                }
+                while (pennies != 0)
+                {
+                    ImageIcon img = new ImageIcon(Denomination.Penny.img());
+                    label.setIcon(img);
+                    pennies -= 1;
+                }
+
+
+
+            }
+
+        }
+
+
+
+    }
+
+
 
 }
